@@ -1,7 +1,7 @@
 package me.gosdev.chatpointsttv.utils;
 
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import com.github.twitch4j.common.enums.SubscriptionPlan;
@@ -15,12 +15,15 @@ import me.gosdev.chatpointsttv.ChatPointsTTV;
 import me.gosdev.chatpointsttv.twitch.TwitchClient;
 
 public class TwitchUtils {
+
+    private TwitchUtils() {}
+
     public static List<String> getModeratedChannelIDs(String auth, String userId) throws HystrixRuntimeException {
         String cursor = null;
         List<String> modsOutput = new ArrayList<>();
 
         do {
-            ModeratedChannelList moderatorList = ChatPointsTTV.getPlugin().getTwitch().getClient().getHelix().getModeratedChannels(
+            ModeratedChannelList moderatorList = ChatPointsTTV.getInstance().getTwitch().getClient().getHelix().getModeratedChannels(
                     auth,
                     userId,
                     100,
@@ -34,52 +37,46 @@ public class TwitchUtils {
         return modsOutput;
     }
 
-    public static String PlanToString(SubscriptionPlan plan) {
-        switch (plan.toString()) {
-            case "Prime":
-                return "Tier 1 (Prime)";
-            case "1000":
-                return "Tier 1";
-            case "2000":
-                return "Tier 2";
-            case "3000":
-                return "Tier 3";
-            default:
-                return null;
-        }
+    public static String planToString(SubscriptionPlan plan) {
+        return switch (plan.toString()) {
+            case "Prime" -> "Tier 1 (Prime)";
+            case "1000" -> "Tier 1";
+            case "2000" -> "Tier 2";
+            case "3000" -> "Tier 3";
+            default -> null;
+        };
     }
 
-    public static String PlanToConfig(SubscriptionPlan plan) {
-        switch (plan.toString()) {
-            case "Prime":
-                return "TWITCH_PRIME";
-            case "1000":
-                return "TIER1";
-            case "2000":
-                return "TIER2";
-            case "3000":
-                return "TIER3";
-            default:
-                return null;
-        }
+    public static String planToConfig(SubscriptionPlan plan) {
+        return switch (plan.toString()) {
+            case "Prime" -> "TWITCH_PRIME";
+            case "1000" -> "TIER1";
+            case "2000" -> "TIER2";
+            case "3000" -> "TIER3";
+            default -> null;
+        };
     }
+
     public static String getUserId(String username) {
-        UserList resultList = ChatPointsTTV.getPlugin().getTwitch().getClient().getHelix().getUsers(TwitchClient.oauth.getAccessToken(), null, Arrays.asList(username)).execute();
+        TwitchClient client = ChatPointsTTV.getInstance().getTwitch();
+        UserList resultList = client.getClient().getHelix().getUsers(client.getOAuth().getAccessToken(), null, Collections.singletonList(username)).execute();
         if (resultList.getUsers().isEmpty()) {
             throw new NullPointerException("Couldn't fetch user: " + username);
         }
         return resultList.getUsers().get(0).getId();
     }
+
     public static String getUsername(String userId) {
-        UserList resultList = ChatPointsTTV.getPlugin().getTwitch().getClient().getHelix().getUsers(TwitchClient.oauth.getAccessToken(), Arrays.asList(userId), null).execute();
+        TwitchClient client = ChatPointsTTV.getInstance().getTwitch();
+        UserList resultList = client.getClient().getHelix().getUsers(client.getOAuth().getAccessToken(), Collections.singletonList(userId), null).execute();
         if (resultList.getUsers().isEmpty()) {
             throw new NullPointerException("Couldn't fetch user ID: " + userId);
         }
         return resultList.getUsers().get(0).getDisplayName();
     }
-    public static boolean isLive(String accessToken, String username) {
-        StreamList request = ChatPointsTTV.getPlugin().getTwitch().getClient().getHelix().getStreams(accessToken, null, null, null, null, null, null, Arrays.asList(username)).execute();
 
+    public static boolean isLive(String accessToken, String username) {
+        StreamList request = ChatPointsTTV.getInstance().getTwitch().getClient().getHelix().getStreams(accessToken, null, null, null, null, null, null, Collections.singletonList(username)).execute();
         return !request.getStreams().isEmpty();
     }
 }

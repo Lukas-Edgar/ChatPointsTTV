@@ -1,8 +1,8 @@
 package me.gosdev.chatpointsttv.utils;
 
 public class Channel {
-    private String channelName;
-    private String channelId;
+    private final String channelName;
+    private final String channelId;
     private boolean live;
 
     public Channel (String name, String id, boolean live) {

@@ -7,8 +7,11 @@ import com.google.common.collect.ImmutableMap;
 
 import net.md_5.bungee.api.ChatColor;
 
+/**
+ * Mapping of Spigot ChatColor to appropriate Java Color
+ */
 public class ColorUtils {
-    // Mapping of Spigot ChatColor to appropriate Java Color
+
     private static final Map<ChatColor, Color> COLOR_MAPPINGS = ImmutableMap.<ChatColor, Color>builder()
         .put(ChatColor.BLACK, new Color(0, 0, 0))
         .put(ChatColor.DARK_BLUE, new Color(0, 0, 170))
@@ -28,21 +31,13 @@ public class ColorUtils {
         .put(ChatColor.WHITE, new Color(255, 255, 255))
         .build();
 
-    public static String rgbToHex(int rgb) {
-        return Integer.toHexString(rgb).substring(2);
-    }
+    private ColorUtils() {}
 
     public static int hexToRgb(String hex) {
-        if (hex.startsWith("#")) hex = hex.substring(1); // Remove # from color code
+        if (hex.startsWith("#")) {
+            hex = hex.substring(1);
+        }
         return Integer.parseInt(hex, 16);
-    }
-
-    public static int getRgb(int red, int green, int blue) {
-        return new Color(red, green, blue).getRGB();
-    }
-
-    public static String formattedRgb(Color color) {
-        return "(" + color.getRed() + ", " + color.getGreen() + ", " + color.getBlue() + ")";
     }
 
     public static ChatColor getClosestChatColor(Color color) {
@@ -61,9 +56,9 @@ public class ColorUtils {
     }
 
     private static double getColorDistance(Color c1, Color c2) {
-        int redDiff = c1.getRed() - c2.getRed();
-        int greenDiff = c1.getGreen() - c2.getGreen();
-        int blueDiff = c1.getBlue() - c2.getBlue();
+        double redDiff = (double) c1.getRed() - (double) c2.getRed();
+        double greenDiff = (double) c1.getGreen() - (double) c2.getGreen();
+        double blueDiff = (double) c1.getBlue() - (double) c2.getBlue();
         return Math.sqrt(redDiff * redDiff + greenDiff * greenDiff + blueDiff * blueDiff);
     }
 }
