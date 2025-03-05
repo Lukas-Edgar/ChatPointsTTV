@@ -17,40 +17,38 @@ import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
 
 public class ImplicitGrantFlow {
-    public static AuthenticationCallbackServer server = new AuthenticationCallbackServer(3000);
 
-    static Utils utils = ChatPointsTTV.getUtils();
+    private ImplicitGrantFlow() {}
 
-    public static CompletableFuture<String> getAccessToken(ChatPointsTTV plugin, CommandSender p, String clientID) {
+    public static final AuthenticationCallbackServer server = new AuthenticationCallbackServer(3000);
+
+    private static final Utils utils = ChatPointsTTV.getUtils();
+
+    public static CompletableFuture<String> getAccessToken(ChatPointsTTV plugin, CommandSender sender, String clientID) {
         CompletableFuture<String> future = new CompletableFuture<>();
-        String AuthURL = "https://id.twitch.tv/oauth2/authorize?response_type=token&client_id=" + clientID + "&redirect_uri=http://localhost:3000&scope=" + TwitchClient.scopes;
+        String authURL = "https://id.twitch.tv/oauth2/authorize?response_type=token&client_id=" + clientID + "&redirect_uri=http://localhost:3000&scope=" + TwitchClient.SCOPES;
 
-        server = new AuthenticationCallbackServer(3000);
-        if (plugin.getTwitch().getClient() != null) {
-            plugin.getTwitch().getClient().close();
-        }
+        plugin.getTwitch().close();
 
-        if (p == Bukkit.getServer().getConsoleSender()) {
-            TextComponent msg = new TextComponent("Link your Twitch account to set ChatPointsTTV up. Open this link in your browser to login:\n" + AuthURL);
-            utils.sendMessage(p, msg);
+        if (sender == Bukkit.getServer().getConsoleSender()) {
+            TextComponent msg = new TextComponent("Link your Twitch account to set ChatPointsTTV up. Open this link in your browser to login:\n" + authURL);
+            utils.sendMessage(sender, msg);
         } else {
             BaseComponent msg = new TextComponent(ChatColor.DARK_PURPLE + "" + ChatColor.BOLD + "--------------- ChatPointsTTV ---------------\n" + ChatColor.RESET + ChatColor.WHITE + "Link your Twitch account to set ChatPointsTTV up\n");
             BaseComponent btn = new TextComponent(ChatColor.LIGHT_PURPLE + "[Click here to login with Twitch]");
             btn.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder("Click to open in browser").create()));
-            btn.setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, AuthURL));
+            btn.setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, authURL));
 
             msg.addExtra(btn);
 
-            utils.sendMessage(p, msg);
+            utils.sendMessage(sender, msg);
         }
         
-        int serverCloseId = Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> {
-            server.stop();
-        }, 6000L); // 60 L == 3 sec, 20 ticks == 1 sec
+        int serverCloseId = Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> server.stop(), 6000L);
 
         Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
             try {
-                if (!server.isRunning()) {
+                if (server.isNotRunning()) {
                     server.start();
                 }
                 if(server.getAccessToken() != null) {
