@@ -1,17 +1,16 @@
 package me.gosdev.chatpointsttv.Utils;
 
+import me.gosdev.chatpointsttv.Permissions;
+import net.md_5.bungee.api.ChatColor;
+import net.md_5.bungee.api.chat.BaseComponent;
+import net.md_5.bungee.api.chat.ComponentBuilder;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import me.gosdev.chatpointsttv.ChatPointsTTV;
-import net.md_5.bungee.api.ChatColor;
-import net.md_5.bungee.api.chat.BaseComponent;
-import net.md_5.bungee.api.chat.ComponentBuilder;
-
 public class Utils_1_12_R1 implements Utils {
     @Override
-    public void displayTitle(Player p, String title, String action, String sub, Boolean bold, ChatColor titleColor, ChatColor subColor) {
+    public void displayTitle(Player p, String title, String action, String sub, boolean bold, ChatColor titleColor, ChatColor subColor) {
         ChatColor format = bold ? ChatColor.BOLD : ChatColor.RESET;
         p.sendTitle(titleColor + title, action + subColor + " " + format + sub, 10, 70, 20);
     }

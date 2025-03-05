@@ -1,16 +1,15 @@
 package me.gosdev.chatpointsttv.Utils;
 
+import me.gosdev.chatpointsttv.Permissions;
+import net.md_5.bungee.api.ChatColor;
+import net.md_5.bungee.api.chat.BaseComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import me.gosdev.chatpointsttv.ChatPointsTTV;
-import net.md_5.bungee.api.ChatColor;
-import net.md_5.bungee.api.chat.BaseComponent;
-
 public class Utils_1_9_R1 implements Utils {    @SuppressWarnings("deprecation")
     @Override
-    public void displayTitle(Player p, String title, String action, String sub, Boolean bold, ChatColor titleColor, ChatColor subColor) {
+    public void displayTitle(Player p, String title, String action, String sub, boolean bold, ChatColor titleColor, ChatColor subColor) {
         if (bold) {
             p.sendTitle(titleColor + title, action + " " + subColor + ChatColor.BOLD + sub);
         } else {
