@@ -6,13 +6,13 @@ import me.gosdev.chatpointsttv.utils.TwitchUtils;
 import java.util.List;
 
 public class Reward {
-    rewardType type;
+    RewardType type;
     private final String event;
     private final List<String> cmds;
     private final String channel;
     private final String channelId;
 
-    public Reward (rewardType type, String channel, String event, List<String> cmds) {
+    public Reward (RewardType type, String channel, String event, List<String> cmds) {
         this.type = type;
         this.channel = channel;
         
@@ -28,7 +28,7 @@ public class Reward {
     public List<String> getCommands() {
         return cmds;
     }
-    public rewardType getType() {
+    public RewardType getType() {
         return type;
     }
     public String getChannel() {

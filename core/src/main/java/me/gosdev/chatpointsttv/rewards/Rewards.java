@@ -1,69 +1,77 @@
 package me.gosdev.chatpointsttv.rewards;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import me.gosdev.chatpointsttv.utils.RewardType;
 import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.configuration.file.FileConfiguration;
 
 import me.gosdev.chatpointsttv.ChatPointsTTV;
-public class Rewards {
-    public static enum rewardType {
-        FOLLOW,
-        CHANNEL_POINTS,
-        CHEER,
-        SUB,
-        GIFT,
-        RAID
-    };
 
+import static org.bukkit.Bukkit.getLogger;
+
+public class Rewards {
+
+    private Rewards() {}
+
+    private static final Logger LOG = getLogger();
     public static final String EVERYONE = "*";
 
-    public static Map<rewardType, ArrayList<Reward>> rewards = new HashMap<>();
+    private static final Map<RewardType, List<Reward>> REWARD_LIST = new EnumMap<>(RewardType.class);
 
-    public static ArrayList<Reward> getRewards(rewardType type) {
-        if (rewards.get(type) != null) return rewards.get(type); // Give stored dictionary if it was already fetched
-        FileConfiguration config = ChatPointsTTV.getPlugin().config;
+    public static List<Reward> getRewards(RewardType type) {
+        if (REWARD_LIST.get(type) != null) {
+            return REWARD_LIST.get(type);
+        }
 
-        Object config_obj = config.get(type.toString().toUpperCase() + "_REWARDS");
-        ArrayList<Reward> reward_list = new ArrayList<>();
+        Object config = ChatPointsTTV.getInstance().getRewardConfig(type);
+        List<Reward> rewards = new ArrayList<>();
 
-        if (config_obj instanceof ArrayList && type.equals(rewardType.FOLLOW)) { // Should only be non-specific Follow rewards
-            reward_list.add(new Reward(type, EVERYONE, null, config.getStringList(type.toString().toUpperCase() + "_REWARDS")));
-        } else if (config_obj instanceof  ConfigurationSection) {
-            ConfigurationSection config_rewards = (ConfigurationSection) config_obj;
-            
-            if (type == rewardType.FOLLOW) { // Follow rewards should have one level less
-                Set<String> keys = ((ConfigurationSection) config_rewards).getKeys(false);
-                for (String channel : keys) {
-                    reward_list.add(new Reward(type, channel.equals("default") ? EVERYONE : channel, null, config_rewards.getStringList(channel)));
-                }
-            } else {
-                Set<String> keys = ((ConfigurationSection) config_rewards).getKeys(false);
-                for (String key : keys) {
-                    ConfigurationSection channelSection = config_rewards.getConfigurationSection(key);
-                    if (channelSection == null) {
-                        // No channel specified
-                        reward_list.add(new Reward(type, EVERYONE, key, config_rewards.getStringList(key)));
-                    } else {
-                        // Streamer specific event
-                        Set<String> channelKeys = channelSection.getKeys(false);
-                        for (String channel : channelKeys) {
-                            reward_list.add(new Reward(type, channel.equals("default") ? EVERYONE : channel, key, channelSection.getStringList(channel)));
-                        }
-                    }
+        if (config instanceof ArrayList<?> configList && type.equals(RewardType.FOLLOW)) { // Should only be non-specific Follow rewards
+            addDefaultFollowRewards(type, configList, rewards);
+        } else if (config instanceof ConfigurationSection configRewards) {
+            addRewardsFromSection(type, configRewards, rewards);
+        } else {
+            String message = String.format("invalid reward configuration for %s", type);
+            LOG.log(Level.WARNING, message);
+            return Collections.emptyList();
+        }
+        rewards.sort(new RewardComparator());
+        REWARD_LIST.put(type, rewards);
+
+        return REWARD_LIST.get(type);
+    }
+
+    private static void addRewardsFromSection(RewardType type, ConfigurationSection configRewards, List<Reward> rewards) {
+        if (type == RewardType.FOLLOW) {
+            addRewardsForChannel(type, rewards, null, configRewards);
+        } else {
+            for (String event : configRewards.getKeys(false)) {
+                ConfigurationSection channelSection = configRewards.getConfigurationSection(event);
+                if (channelSection == null) {
+                    rewards.add(new Reward(type, EVERYONE, event, configRewards.getStringList(event)));
+                } else {
+                    addRewardsForChannel(type, rewards, event, channelSection);
                 }
             }
-        } else {
-            ChatPointsTTV.getPlugin().log.warning("Invalid config for " + type.toString() + " rewards");
-            return null; 
         }
-        reward_list.sort(new RewardComparator());
-        rewards.put(type, reward_list);
+    }
 
-        return rewards.get(type);
+    private static void addRewardsForChannel(RewardType type, List<Reward> rewards, String key, ConfigurationSection channelSection) {
+        Set<String> channelKeys = channelSection.getKeys(false);
+        for (String channelKey : channelKeys) {
+            String channel = channelKey.equals("default") ? EVERYONE : channelKey;
+            rewards.add(new Reward(type, channel, key, channelSection.getStringList(channelKey)));
+        }
+    }
+
+    private static void addDefaultFollowRewards(RewardType type, ArrayList<?> configList, List<Reward> rewards) {
+        List<String> rewardList = configList.stream().map(String.class::cast).toList();
+        rewards.add(new Reward(type, EVERYONE, null, rewardList));
+    }
+
+    public static void resetRewards() {
+        REWARD_LIST.clear();
     }
 }
