@@ -1,9 +1,9 @@
-package me.gosdev.chatpointsttv.Rewards;
+package me.gosdev.chatpointsttv.rewards;
+
+import me.gosdev.chatpointsttv.utils.RewardType;
+import me.gosdev.chatpointsttv.utils.TwitchUtils;
 
 import java.util.List;
-
-import me.gosdev.chatpointsttv.Rewards.Rewards.rewardType;
-import me.gosdev.chatpointsttv.Utils.TwitchUtils;
 
 public class Reward {
     rewardType type;

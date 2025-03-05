@@ -10,7 +10,7 @@ import java.util.logging.Logger;
 import org.bukkit.entity.Player;
 import org.json.JSONArray;
 
-import me.gosdev.chatpointsttv.Utils.Utils;
+import me.gosdev.chatpointsttv.utils.Utils;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.ClickEvent;

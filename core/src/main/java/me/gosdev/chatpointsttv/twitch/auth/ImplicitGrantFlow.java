@@ -1,4 +1,4 @@
-package me.gosdev.chatpointsttv.Twitch.Auth;
+package me.gosdev.chatpointsttv.twitch.auth;
 
 import java.io.IOException;
 import java.util.concurrent.CompletableFuture;
@@ -7,8 +7,8 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 
 import me.gosdev.chatpointsttv.ChatPointsTTV;
-import me.gosdev.chatpointsttv.Twitch.TwitchClient;
-import me.gosdev.chatpointsttv.Utils.Utils;
+import me.gosdev.chatpointsttv.twitch.TwitchClient;
+import me.gosdev.chatpointsttv.utils.Utils;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.ClickEvent;

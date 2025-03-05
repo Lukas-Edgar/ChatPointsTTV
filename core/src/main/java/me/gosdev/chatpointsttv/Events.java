@@ -1,9 +1,10 @@
 package me.gosdev.chatpointsttv;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.logging.Logger;
-
+import me.gosdev.chatpointsttv.utils.AlertMode;
+import me.gosdev.chatpointsttv.utils.SpawnRunnable;
+import me.gosdev.chatpointsttv.utils.Utils;
+import net.md_5.bungee.api.ChatColor;
+import net.md_5.bungee.api.chat.ComponentBuilder;
 import org.apache.commons.lang3.EnumUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -12,12 +13,12 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import me.gosdev.chatpointsttv.ChatPointsTTV.alert_mode;
-import me.gosdev.chatpointsttv.ChatPointsTTV.permissions;
-import me.gosdev.chatpointsttv.Utils.SpawnRunnable;
-import me.gosdev.chatpointsttv.Utils.Utils;
-import net.md_5.bungee.api.ChatColor;
-import net.md_5.bungee.api.chat.ComponentBuilder;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 public class Events {
     static ChatPointsTTV plugin = ChatPointsTTV.getPlugin();

@@ -1,4 +1,4 @@
-package me.gosdev.chatpointsttv.Twitch;
+package me.gosdev.chatpointsttv.twitch;
 
 import java.awt.Color;
 import java.util.HashMap;
@@ -8,7 +8,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.naming.ConfigurationException;
-
+import me.gosdev.chatpointsttv.Permissions;
+import me.gosdev.chatpointsttv.utils.*;
 import org.bstats.charts.SimplePie;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
@@ -37,12 +38,7 @@ import com.github.twitch4j.helix.domain.User;
 import com.github.twitch4j.pubsub.events.RewardRedeemedEvent;
 
 import me.gosdev.chatpointsttv.ChatPointsTTV;
-import me.gosdev.chatpointsttv.Rewards.Rewards;
-import me.gosdev.chatpointsttv.Utils.Channel;
-import me.gosdev.chatpointsttv.Utils.ColorUtils;
-import me.gosdev.chatpointsttv.Utils.Scopes;
-import me.gosdev.chatpointsttv.Utils.TwitchUtils;
-import me.gosdev.chatpointsttv.Utils.Utils;
+import me.gosdev.chatpointsttv.rewards.Rewards;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.ComponentBuilder;

@@ -7,7 +7,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.naming.ConfigurationException;
-
+import me.gosdev.chatpointsttv.utils.*;
 import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -19,12 +19,9 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import me.gosdev.chatpointsttv.Rewards.Rewards;
-import me.gosdev.chatpointsttv.Twitch.Auth.ImplicitGrantFlow;
-import me.gosdev.chatpointsttv.Twitch.TwitchClient;
-import me.gosdev.chatpointsttv.Twitch.TwitchEventHandler;
-import me.gosdev.chatpointsttv.Utils.LibraryLoader;
-import me.gosdev.chatpointsttv.Utils.Utils;
+import me.gosdev.chatpointsttv.rewards.Rewards;
+import me.gosdev.chatpointsttv.twitch.auth.ImplicitGrantFlow;
+import me.gosdev.chatpointsttv.twitch.TwitchClient;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.ClickEvent;

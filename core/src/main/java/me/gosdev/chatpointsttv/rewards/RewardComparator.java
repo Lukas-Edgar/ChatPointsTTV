@@ -1,4 +1,4 @@
-package me.gosdev.chatpointsttv.Rewards;
+package me.gosdev.chatpointsttv.rewards;
 
 import java.util.Comparator;
 

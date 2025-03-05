@@ -1,4 +1,4 @@
-package me.gosdev.chatpointsttv.Twitch.Auth;
+package me.gosdev.chatpointsttv.twitch.auth;
 
 import java.io.IOException;
 import java.net.InetAddress;
@@ -7,7 +7,9 @@ import java.net.Socket;
 import java.net.SocketException;
 import java.net.URL;
 
-import me.gosdev.chatpointsttv.Utils.Scopes;
+import me.gosdev.chatpointsttv.utils.Scopes;
+
+import static org.bukkit.Bukkit.getLogger;
 
 public class AuthenticationCallbackServer implements AuthenticationListener {
 

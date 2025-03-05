@@ -1,14 +1,10 @@
-package me.gosdev.chatpointsttv.Tests;
-
-import java.util.ArrayList;
-import java.util.Optional;
-
-import org.bukkit.command.CommandSender;
+package me.gosdev.chatpointsttv.tests;
 
 import com.github.philippheuer.events4j.core.EventManager;
 import com.github.twitch4j.common.enums.SubscriptionPlan;
 
 import me.gosdev.chatpointsttv.ChatPointsTTV;
+import me.gosdev.chatpointsttv.utils.MalformedArgumentsException;
 import net.md_5.bungee.api.ChatColor;
 
 public class TestCommand {

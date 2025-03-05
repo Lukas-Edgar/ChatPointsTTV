@@ -1,10 +1,11 @@
-package me.gosdev.chatpointsttv.Rewards;
+package me.gosdev.chatpointsttv.rewards;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
+import me.gosdev.chatpointsttv.utils.RewardType;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 

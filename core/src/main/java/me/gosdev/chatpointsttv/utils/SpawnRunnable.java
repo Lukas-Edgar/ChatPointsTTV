@@ -1,5 +1,6 @@
 package me.gosdev.chatpointsttv.utils;
 
+import me.gosdev.chatpointsttv.ChatPointsTTV;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;

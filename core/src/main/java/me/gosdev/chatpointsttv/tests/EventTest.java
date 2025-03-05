@@ -1,4 +1,4 @@
-package me.gosdev.chatpointsttv.Tests;
+package me.gosdev.chatpointsttv.tests;
 
 import java.time.Instant;
 import java.util.Optional;
@@ -15,7 +15,7 @@ import com.github.twitch4j.pubsub.domain.ChannelPointsUser;
 import com.github.twitch4j.pubsub.events.RewardRedeemedEvent;
 
 import me.gosdev.chatpointsttv.ChatPointsTTV;
-import me.gosdev.chatpointsttv.Utils.TwitchUtils;
+import me.gosdev.chatpointsttv.utils.TwitchUtils;
 
 public class EventTest {
     

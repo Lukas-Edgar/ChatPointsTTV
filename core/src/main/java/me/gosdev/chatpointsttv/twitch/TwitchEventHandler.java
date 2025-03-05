@@ -1,8 +1,4 @@
-package me.gosdev.chatpointsttv.Twitch;
-
-import java.util.ArrayList;
-
-import org.bukkit.Bukkit;
+package me.gosdev.chatpointsttv.twitch;
 
 import com.github.twitch4j.common.enums.SubscriptionPlan;
 import com.github.twitch4j.eventsub.events.ChannelChatMessageEvent;
@@ -14,12 +10,9 @@ import com.github.twitch4j.pubsub.events.RewardRedeemedEvent;
 
 import me.gosdev.chatpointsttv.ChatPointsTTV;
 import me.gosdev.chatpointsttv.Events;
-import me.gosdev.chatpointsttv.Rewards.Reward;
-import me.gosdev.chatpointsttv.Rewards.Rewards;
-import me.gosdev.chatpointsttv.Rewards.Rewards.rewardType;
-import me.gosdev.chatpointsttv.Utils.Channel;
-import me.gosdev.chatpointsttv.Utils.TwitchUtils;
-import me.gosdev.chatpointsttv.Utils.Utils;
+import me.gosdev.chatpointsttv.rewards.Reward;
+import me.gosdev.chatpointsttv.rewards.Rewards;
+import me.gosdev.chatpointsttv.utils.*;
 import net.md_5.bungee.api.ChatColor;
 
 public class TwitchEventHandler {

@@ -12,12 +12,11 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
 
 import com.github.twitch4j.common.enums.SubscriptionPlan;
-
-import me.gosdev.chatpointsttv.Tests.TestCommand;
-import me.gosdev.chatpointsttv.Twitch.Auth.ImplicitGrantFlow;
-import me.gosdev.chatpointsttv.Twitch.TwitchClient;
-import me.gosdev.chatpointsttv.Utils.Channel;
-import me.gosdev.chatpointsttv.Utils.Utils;
+import me.gosdev.chatpointsttv.tests.TestCommand;
+import me.gosdev.chatpointsttv.twitch.TwitchClient;
+import me.gosdev.chatpointsttv.twitch.auth.ImplicitGrantFlow;
+import me.gosdev.chatpointsttv.utils.Channel;
+import me.gosdev.chatpointsttv.utils.Utils;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.ClickEvent;

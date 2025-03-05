@@ -1,4 +1,6 @@
-package me.gosdev.chatpointsttv.Twitch.Auth;
+package me.gosdev.chatpointsttv.twitch.auth;
+
+import me.gosdev.chatpointsttv.utils.Scopes;
 
 import java.io.*;
 import java.net.Socket;

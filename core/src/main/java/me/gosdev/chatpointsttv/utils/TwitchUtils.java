@@ -12,7 +12,7 @@ import com.github.twitch4j.helix.domain.UserList;
 import com.netflix.hystrix.exception.HystrixRuntimeException;
 
 import me.gosdev.chatpointsttv.ChatPointsTTV;
-import me.gosdev.chatpointsttv.Twitch.TwitchClient;
+import me.gosdev.chatpointsttv.twitch.TwitchClient;
 
 public class TwitchUtils {
     public static List<String> getModeratedChannelIDs(String auth, String userId) throws HystrixRuntimeException {
