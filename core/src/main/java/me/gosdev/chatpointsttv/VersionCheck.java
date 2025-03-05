@@ -6,6 +6,7 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.bukkit.entity.Player;
 import org.json.JSONArray;
@@ -19,47 +20,57 @@ import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
 
 public class VersionCheck {
-    private final static String url = "https://api.modrinth.com/v2/project/nN0gRvoO/version";
-    private final static String download_url = "https://modrinth.com/plugin/chatpointsttv";
+
+    private VersionCheck() {}
+    private static final String URL = "https://api.modrinth.com/v2/project/nN0gRvoO/version";
+    private static final String DOWNLOAD_URL = "https://modrinth.com/plugin/chatpointsttv";
 
     public static void check() {
-        ChatPointsTTV plugin = ChatPointsTTV.getPlugin();
+        ChatPointsTTV plugin = ChatPointsTTV.getInstance();
         Logger log = plugin.log;
 
         try {
-            StringBuilder result = new StringBuilder();
-            HttpURLConnection conn = (HttpURLConnection) new URI(url).toURL().openConnection();
-            conn.setRequestMethod("GET");
-            try (BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()))) {
-                for (String line; (line = reader.readLine()) != null; ) {
-                    result.append(line);
-                }
-            }
-            conn.disconnect();
-
-            JSONArray json = new JSONArray(result.toString());
-            String latest = json.getJSONObject(0).getString("version_number");
+            String latest = getVersionNumber();
             Utils utils = ChatPointsTTV.getUtils();
 
-            if (!ChatPointsTTV.getPlugin().getDescription().getVersion().equals(latest.replaceAll("[^\\d.]", ""))) {
-                for (Player p: plugin.getServer().getOnlinePlayers()) {
-                    if (p.hasPermission(ChatPointsTTV.permissions.MANAGE.permission_id)) {
-                        ComponentBuilder formatted = new ComponentBuilder(ChatColor.YELLOW + "Click " + ChatColor.UNDERLINE + "here" + ChatColor.RESET + ChatColor.YELLOW + " to download the latest version");
-            
-                        BaseComponent btn = formatted.create()[0];
-                        btn.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder("Click to open in browser").create())); 
-                        btn.setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, download_url));
-
-                        utils.sendMessage(p, new TextComponent(ChatColor.YELLOW + "ChatPointsTTV v" + latest + " has been released!"));
-                        utils.sendMessage(p, btn);
+            if (!ChatPointsTTV.getInstance().getDescription().getVersion().equals(latest.replaceAll("[^\\d.]", ""))) {
+                for (Player player: plugin.getServer().getOnlinePlayers()) {
+                    if (player.hasPermission(Permissions.MANAGE.permissionId)) {
+                        sendVersionUpdateMessage(player, utils, latest);
                     }
                 }
-                log.info("ChatPointsTTV v" + latest + " has been released! Download the latest version in " + download_url);
-
+                String message = String.format("ChatPointsTTV v%S has been released! Download the latest version in %s", latest, DOWNLOAD_URL);
+                log.log(Level.INFO, message);
             }
 
         } catch (IOException | URISyntaxException e) {
-            log.warning("Couldn't fetch latest version." + e.toString());
+            log.log(Level.WARNING, "Couldn't fetch latest version.", e);
         }
+    }
+
+    private static void sendVersionUpdateMessage(Player player, Utils utils, String latest) {
+        ComponentBuilder formatted = new ComponentBuilder(ChatColor.YELLOW + "Click " + ChatColor.UNDERLINE + "here" + ChatColor.RESET + ChatColor.YELLOW + " to download the latest version");
+
+        BaseComponent button = formatted.create()[0];
+        button.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder("Click to open in browser").create()));
+        button.setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, DOWNLOAD_URL));
+
+        utils.sendMessage(player, new TextComponent(ChatColor.YELLOW + "ChatPointsTTV v" + latest + " has been released!"));
+        utils.sendMessage(player, button);
+    }
+
+    private static String getVersionNumber() throws IOException, URISyntaxException {
+        StringBuilder result = new StringBuilder();
+        HttpURLConnection conn = (HttpURLConnection) new URI(URL).toURL().openConnection();
+        conn.setRequestMethod("GET");
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()))) {
+            for (String line; (line = reader.readLine()) != null; ) {
+                result.append(line);
+            }
+        }
+        conn.disconnect();
+
+        JSONArray json = new JSONArray(result.toString());
+        return json.getJSONObject(0).getString("version_number");
     }
 }

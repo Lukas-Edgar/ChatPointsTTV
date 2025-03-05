@@ -8,6 +8,7 @@ import net.md_5.bungee.api.chat.ComponentBuilder;
 import org.apache.commons.lang3.EnumUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -21,184 +22,185 @@ import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 public class Events {
-    static ChatPointsTTV plugin = ChatPointsTTV.getPlugin();
+
+    private Events() {}
+    static ChatPointsTTV plugin = ChatPointsTTV.getInstance();
     static Logger log = plugin.log;
 
     static Utils utils = ChatPointsTTV.getUtils();
 
-    public static void setAlertMode(alert_mode alertMode) {
-        ChatPointsTTV.alertMode = alertMode;
-    }
-
     public static void showIngameAlert(String user, String action, String rewardName, ChatColor titleColor, ChatColor userColor, Boolean isBold) {
-        if (ChatPointsTTV.alertMode.equals(ChatPointsTTV.alert_mode.NONE)) return;
+
+        AlertMode alertMode = ChatPointsTTV.getInstance().getAlertMode();
+        if (alertMode == AlertMode.NONE) {
+            return;
+        }
+
         ComponentBuilder builder = new ComponentBuilder(user).color(userColor).bold(isBold);
         builder.append(" " + action).color(titleColor);
         builder.append(" " + rewardName).color(userColor);
 
-        switch (ChatPointsTTV.alertMode) {
-            case CHAT:
-                for (Player p : Bukkit.getOnlinePlayers()) {
-                    if (!p.hasPermission(ChatPointsTTV.permissions.BROADCAST.permission_id)) continue;
-                    utils.sendMessage(p, builder.create());
-                }
-                break;
-            case TITLE:
-                for (Player p : Bukkit.getOnlinePlayers()) {
-                    if (!p.hasPermission(ChatPointsTTV.permissions.BROADCAST.permission_id)) continue;
-                    utils.displayTitle(p.getPlayer(), user, action, rewardName, isBold, userColor, titleColor);
-                };
-                break;
-
-            case ALL:
-                for (Player p : Bukkit.getOnlinePlayers()) {
-                    if (!p.hasPermission(ChatPointsTTV.permissions.BROADCAST.permission_id)) continue;
-                    utils.sendMessage(p, builder.create());
-                    utils.displayTitle(p.getPlayer(), user, action, rewardName, isBold, userColor, titleColor);
-                }
-                break;
-            default:
-                break;
+        for (Player player : Bukkit.getOnlinePlayers()) {
+            if (!player.hasPermission(Permissions.BROADCAST.permissionId)) {
+                continue;
+            }
+            if (alertMode == AlertMode.CHAT || alertMode == AlertMode.ALL) {
+                utils.sendMessage(player, builder.create());
+            }
+            if (alertMode == AlertMode.TITLE || alertMode == AlertMode.ALL) {
+                utils.displayTitle(player.getPlayer(), user, action, rewardName, isBold, userColor, titleColor);
+            }
         }
+
     }
 
     public static void runAction(String action, String args, String user) {
-        args = args.replaceAll("\\{USER\\}", user);
-        List<String> cmd = Arrays.asList(args.split(" "));
-        switch(action.toUpperCase()) {
-            case "SPAWN":
-                try {
-                    for (Player p : Bukkit.getOnlinePlayers()) {
-                        if (!EnumUtils.isValidEnum(EntityType.class, cmd.get(0).toUpperCase())) throw new IllegalArgumentException(cmd.get(0)); // Check if entity exists
-                        SpawnRunnable entityRunnable = new SpawnRunnable();
-                        entityRunnable.entity = EntityType.valueOf(cmd.get(0).toUpperCase());
-
-                        if (cmd.size() >= 2) { // Is specifying an amount?
-                            try {
-                                entityRunnable.amount = Integer.parseInt(cmd.get(1));
-                            } catch (NumberFormatException e) {
-                                throw new NumberFormatException(cmd.get(1));
-                            }
-                        } else {
-                            entityRunnable.amount = 1;
-                        }
-
-                        entityRunnable.entityName = user;
-
-                        if (cmd.size() >= 3) { // Is targeting a player?
-                            Player query = Bukkit.getPlayer(cmd.get(2));
-                            if (query == null || !query.isOnline()) throw new NullPointerException(cmd.get(2));
-                            if (!p.getName().equalsIgnoreCase(cmd.get(2))) {
-                                continue;
-                            }
-                        } else if (!p.hasPermission(permissions.TARGET.permission_id)) continue;
-
-                        entityRunnable.p = p;
-                        entityRunnable.id = Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, entityRunnable, 0, 0);
-                    }
-                } catch (NullPointerException e) {
-                    log.warning("Couldn't find player " + e.getMessage() + ".");
-                } catch (NumberFormatException e) {
-                    log.warning("Invalid amount of entities: " + e.getMessage());
-                } catch (IllegalArgumentException e) {
-                    log.warning("Entity " + e.getMessage() + " does not exist.");
-                } catch (Exception e) {
-                    e.printStackTrace(); // Unknown error. Print full stack trace
-                }
-                break;
-                
-            case "RUN":
-                String text = "";
-                String runAs = cmd.get(0);
-                
-                for (int i = 0; i < cmd.size(); i++) {
-                    if (i <= 0) continue;
-                    
-                    text += " " + cmd.get(i);
-                }
-                text = text.trim();
-
-                final String command = text.replace("/", "");
-
-                if (runAs.equalsIgnoreCase("CONSOLE")) {
-                    new BukkitRunnable() {
-                        @Override
-                        public void run() {
-                            Bukkit.dispatchCommand(Bukkit.getServer().getConsoleSender(), command);
-                        }
-                    }.runTask(plugin);
-                } else if (runAs.equalsIgnoreCase("TARGET")) {
-                    for (Player p : plugin.getServer().getOnlinePlayers()) {
-                        if (p.hasPermission(ChatPointsTTV.permissions.TARGET.permission_id)) {
-                            new BukkitRunnable() {
-                                @Override
-                                public void run() {
-                                    Bukkit.dispatchCommand(p, command);
-                                }
-                            }.runTask(plugin);
-                            return;    
-                        }
-                    }
-                    log.warning("Couldn't find any target players!");
-                } else {
-                    log.warning("Invalid parameter: " + runAs);
-                }
-                break;
-
-            case "GIVE":
-                try {
-                    for (Player p : plugin.getServer().getOnlinePlayers()) {
-                        if (cmd.size() >= 3) { // Is targeting a player?
-                            Player query = Bukkit.getPlayer(cmd.get(2));
-                            if (query == null || !query.isOnline()) throw new NullPointerException(cmd.get(2));
-                            if (!p.getName().equalsIgnoreCase(cmd.get(2))) {
-                                continue;
-                            }
-                        } else if (!p.hasPermission(permissions.TARGET.permission_id)) continue;
-
-                        int amount;
-                        if (cmd.size() >= 2) { // Is specifying an amount?
-                            try {
-                                amount = Integer.parseInt(cmd.get(1));
-                            } catch (NumberFormatException e) {
-                                throw new NumberFormatException(cmd.get(1));
-                            }
-                        } else amount = 1;
-                        
-                        if (!EnumUtils.isValidEnum(Material.class, cmd.get(0))) throw new IllegalArgumentException(cmd.get(0)); // Check if entity exists
-                        ItemStack item = new ItemStack(Material.valueOf(cmd.get(0).toUpperCase()), amount);
-                        p.getInventory().addItem(item);
-                    }
-                } catch (NullPointerException e) {
-                    log.warning("Couldn't find player " + e.getMessage() + ".");
-                } catch (NumberFormatException e) {
-                    log.warning("Invalid amount of items: " + e.getMessage());
-                } catch (IllegalArgumentException e) {
-                    log.warning("Item " + e.getMessage() + " does not exist.");
-                } catch (Exception e) {
-                    e.printStackTrace(); // Unknown error. Print full stack trace
-                }
-                break;
-            
-            case "TNT":
-                for (Player p : Bukkit.getOnlinePlayers()) {
-                    if (!p.hasPermission(permissions.TARGET.permission_id)) continue;
-
-                    SpawnRunnable tntRunnable = new SpawnRunnable();
-                    tntRunnable.entity = EntityType.PRIMED_TNT;
-                    tntRunnable.amount = Integer.parseInt(cmd.get(0));
-                    try {
-                        tntRunnable.explosionTime = Integer.valueOf(cmd.get(1));
-                    } catch (NumberFormatException | ArrayIndexOutOfBoundsException e) {}
-                    
-                    tntRunnable.p = p;
-                    tntRunnable.id = Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, tntRunnable, 0, 2);
-                }
-                break;
-
-            default:
-                log.warning("No such action: " + action.toUpperCase());
-                break;
+        args = args.replace("{USER}", user);
+        List<String> command = Arrays.asList(args.split(" "));
+        switch (action.toUpperCase()) {
+            case "SPAWN" -> actionSpawn(user, command);
+            case "RUN" -> actionRun(command);
+            case "GIVE" -> actionGive(command);
+            case "TNT" -> actionTnt(command);
+            default -> log.log(Level.WARNING, () -> String.format("No such action: %s", action));
         }
+    }
+
+    private static void actionTnt(List<String> command) {
+        Bukkit.getOnlinePlayers()
+                .stream()
+                .filter(player -> player.hasPermission(Permissions.TARGET.permissionId))
+                .forEach(player -> spawnTnt(command, player));
+    }
+
+    private static void spawnTnt(List<String> command, Player player) {
+        SpawnRunnable tntRunnable = new SpawnRunnable();
+        tntRunnable.setEntity(EntityType.PRIMED_TNT);
+        tntRunnable.setAmount(Integer.parseInt(command.get(0)));
+        try {
+            tntRunnable.setExplosionTime(Integer.valueOf(command.get(1)));
+        } catch (NumberFormatException | ArrayIndexOutOfBoundsException e) {
+            log.log(Level.INFO, "ExplosionTime could not be found in command.");
+        }
+
+        tntRunnable.setPlayer(player);
+        tntRunnable.setId(Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, tntRunnable, 0, 2));
+    }
+
+    private static void actionGive(List<String> command) {
+        try {
+            ItemStack item = getItem(command);
+            if (targetNotFound(command)) {
+                return;
+            }
+            getTargetPlayers(command.size() >= 3, command.get(2))
+                    .forEach(player -> player.getInventory().addItem(item));
+        } catch (NumberFormatException e) {
+            log.log(Level.WARNING, String.format("Invalid amount of entities: %s", command.get(1)));
+        }
+    }
+
+    private static boolean targetNotFound(List<String> command) {
+        if (command.size() >= 3) {
+            String targetName = command.get(2);
+            Player targetPlayer = Bukkit.getPlayer(targetName);
+            if (targetPlayer == null || !targetPlayer.isOnline()) {
+                log.log(Level.WARNING, () -> String.format("Couldn't find player %s.", targetName));
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private static ItemStack getItem(List<String> command) {
+        if (!EnumUtils.isValidEnum(Material.class, command.get(0))) {
+            log.warning(() -> String.format("Item %s does not exist.", command.get(0)));
+        }
+        int amount = getAmount(command);
+        return new ItemStack(Material.valueOf(command.get(0).toUpperCase()), amount);
+    }
+
+    private static int getAmount(List<String> command) {
+        if (command.size() >= 2) {
+            return Integer.parseInt(command.get(1));
+        } else {
+            return 1;
+        }
+    }
+
+    private static void actionRun(List<String> cmd) {
+        String runAs = cmd.remove(0);
+
+        final String command = cmd
+                .stream()
+                .map(c -> " " + c)
+                .collect(Collectors.joining())
+                .trim()
+                .replace("/", "");
+
+        if (runAs.equalsIgnoreCase("CONSOLE")) {
+            runConsoleCommand(Bukkit.getServer().getConsoleSender(), command);
+        } else if (runAs.equalsIgnoreCase("TARGET")) {
+            runTargetCommand(command);
+        } else {
+            log.log(Level.WARNING, () -> String.format("Invalid parameter: %s", runAs));
+        }
+    }
+
+    private static void runTargetCommand(String command) {
+        plugin.getServer().getOnlinePlayers()
+                .stream()
+                .filter(p -> p.hasPermission(Permissions.TARGET.permissionId))
+                .findFirst()
+                .ifPresentOrElse(
+                        player -> runConsoleCommand(player, command),
+                        () -> log.log(Level.WARNING, "Couldn't find any target players!")
+                );
+    }
+
+    private static void runConsoleCommand(CommandSender sender, String command) {
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                Bukkit.dispatchCommand(sender, command);
+            }
+        }.runTask(plugin);
+    }
+
+    private static void actionSpawn(String user, List<String> command) {
+        try {
+            boolean isValidEntity = EnumUtils.isValidEnum(EntityType.class, command.get(0).toUpperCase());
+            if (!isValidEntity) {
+                log.log(Level.WARNING, () -> String.format("Entity %s does not exist", command.get(0)));
+                return;
+            }
+            if (targetNotFound(command)) {
+                return;
+            }
+            SpawnRunnable entityRunnable = new SpawnRunnable();
+            entityRunnable.setAmount(getAmount(command));
+            entityRunnable.setEntityName(user);
+            getTargetPlayers(command.size() >= 3, command.get(2))
+                    .forEach(player -> {
+                        entityRunnable.setPlayer(player);
+                        entityRunnable.setId(Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, entityRunnable, 0, 0));
+                    });
+        } catch (NumberFormatException e) {
+            log.log(Level.WARNING, String.format("Invalid amount of entities: %s", command.get(1)));
+        }
+    }
+    
+    private static List<Player> getTargetPlayers(boolean isTargetingAPlayer, String targetName) {
+        List<Player> players = new ArrayList<>();
+        for (Player player : plugin.getServer().getOnlinePlayers()) {
+            if (isTargetingAPlayer) {
+                if (player.getName().equalsIgnoreCase(targetName)) {
+                    players.add(player);
+                }
+            } else if (player.hasPermission(Permissions.TARGET.permissionId)) {
+                players.add(player);
+            }
+        }
+        return players;
     }
 }

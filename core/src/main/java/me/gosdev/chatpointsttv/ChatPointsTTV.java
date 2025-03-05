@@ -3,12 +3,11 @@ package me.gosdev.chatpointsttv;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Logger;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import javax.naming.ConfigurationException;
 import me.gosdev.chatpointsttv.utils.*;
 import org.bstats.bukkit.Metrics;
+import org.bstats.charts.CustomChart;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
@@ -31,41 +30,37 @@ import net.md_5.bungee.api.chat.TextComponent;
 
 public class ChatPointsTTV extends JavaPlugin {
     private static ChatPointsTTV plugin;
-    private static TwitchClient twitch;
-    private CommandController cmdController;
+    private TwitchClient twitch;
 
     private static final Map<String, ChatColor> colors = new HashMap<>();
     private static final Map<String, String> titleStrings = new HashMap<>();
-    public static Boolean shouldMobsGlow;
-    public static Boolean nameSpawnedMobs;
-    public static boolean configOk = true;
-    public static alert_mode alertMode;
+    private boolean shouldMobsGlow;
+    private boolean nameSpawnedMobs;
+    private boolean configOk = true;
+    private AlertMode alertMode;
+    private boolean logEvents;
+
 
     public final Logger log = getLogger();
-    public FileConfiguration config;
-    public Metrics metrics;
+
+    private FileConfiguration config;
+    private Metrics metrics;
+
+    public static Map<String, ChatColor> getChatColors() {
+        return colors;
+    }
+
+    public static Map<String, String> getRedemptionStrings() {
+        return titleStrings;
+    }
+
+    private static Utils utils;
 
 
-    public static enum permissions {
-        BROADCAST("chatpointsttv.broadcast"),
-        MANAGE("chatpointsttv.manage"),
-        TARGET("chatpointsttv.target");
-
-        public final String permission_id;
-
-        private permissions(String label) {
-            this.permission_id = label;
+    public static ChatPointsTTV getInstance() {
+        if (plugin == null) {
+            plugin = new ChatPointsTTV();
         }
-    }
-
-    public static enum alert_mode {
-        NONE,
-        CHAT,
-        TITLE,
-        ALL
-    }
-
-    public static ChatPointsTTV getPlugin() {
         return plugin;
     }
 
@@ -73,86 +68,63 @@ public class ChatPointsTTV extends JavaPlugin {
         return twitch;
     }
 
-    public static FileConfiguration getPluginConfig() {
-        return plugin.config;
-    }
-
-
-    public static Map<String, ChatColor> getChatColors() {
-        return colors;
-    }
-    public static Map<String, String> getRedemptionStrings() {
-        return titleStrings;
-    }
-    private static Utils utils;
 
     public static Utils getUtils() {
-        if (utils != null) return  utils;
-        final Pattern pattern = Pattern.compile("1\\.\\d\\d?");
-        final Matcher matcher = pattern.matcher(Bukkit.getVersion());
-        matcher.find();
-        int version = Integer.parseInt(matcher.group().split("\\.")[1]);
+        if (utils != null) {
+            return utils;
+        }
+        int version = getVersion();
         try {
-            if (version >= 12) { 
+            if (version >= 12) {
                 utils = (Utils) Class.forName(ChatPointsTTV.class.getPackage().getName() + ".Utils.Utils_1_12_R1").getDeclaredConstructor().newInstance();
             } else {
                 utils = (Utils) Class.forName(ChatPointsTTV.class.getPackage().getName() + ".Utils.Utils_1_9_R1").getDeclaredConstructor().newInstance();
             }
             return utils;
-        } catch (Exception e) {
-            plugin.log.warning(e.toString());
-            return null;
+        } catch (Exception exception) {
+            throw new NotFoundException("Error trying to get utils", exception);
         }
+    }
+
+    private static int getVersion() {
+        return Integer.parseInt(Bukkit.getVersion().split("-")[0].split("\\.")[1]);
     }
 
     @Override
     public void onLoad() {
-        LibraryLoader.LoadLibraries(this);
+        LibraryLoader.loadLibraries(this);
     }
 
     @Override
     public void onEnable() {
-        plugin = this;
         PluginManager pm = Bukkit.getServer().getPluginManager();
-        utils = getUtils();
 
         metrics = new Metrics(this, 22873);
-        
-        // Get the latest config after saving the default if missing
+
         this.saveDefaultConfig();
         reloadConfig();
         config = getConfig();
 
-        try {
-            config.getConfigurationSection("COLORS").getKeys(false).forEach(i -> {
-                colors.put(i, ChatColor.valueOf(config.getConfigurationSection("COLORS").getString(i)));
-            });
+        setConfigValues();
 
-            config.getConfigurationSection("STRINGS").getKeys(true).forEach(i -> {
-                titleStrings.put(i, config.getConfigurationSection("STRINGS").getString(i));
-            });
+        boolean rewardBold = config.getBoolean("REWARD_NAME_BOLD");
+        String clientId = config.getString("CUSTOM_CLIENT_ID");
+        String accessToken = config.getString("CUSTOM_ACCESS_TOKEN");
+        boolean ignoreOfflineStreamers = config.getBoolean("IGNORE_OFFLINE_STREAMERS", false);
 
-            TwitchEventHandler.rewardBold = config.getBoolean("REWARD_NAME_BOLD");
-
-            shouldMobsGlow = config.getBoolean("MOB_GLOW", false);
-            alertMode = alert_mode.valueOf(config.getString("INGAME_ALERTS").toUpperCase());
-            nameSpawnedMobs = config.getBoolean("DISPLAY_NAME_ON_MOB", true);
-
-            twitch = new TwitchClient();
-            twitch.enableTwitch(); 
-        } catch (ConfigurationException e) {
-            configOk = false;
-            log.warning("An error occurred while reading config.yml. (if this is the first time running the plugin, you should set it up first)");
-            log.warning(e.getExplanation());
+        if (clientId != null && accessToken != null) {
+            twitch = new TwitchClient(clientId, accessToken, ignoreOfflineStreamers, rewardBold);
+        } else {
+            twitch = new TwitchClient(ignoreOfflineStreamers, rewardBold);
         }
 
-        cmdController = new CommandController();
+        CommandController cmdController = new CommandController();
         this.getCommand("twitch").setExecutor(cmdController);
         this.getCommand("twitch").setTabCompleter(cmdController);
 
         utils.sendMessage(Bukkit.getConsoleSender(), "ChatPointsTTV enabled!");
-        for (Player p: plugin.getServer().getOnlinePlayers()) {
-            if (p.hasPermission(ChatPointsTTV.permissions.MANAGE.permission_id)) {
+        for (Player p : plugin.getServer().getOnlinePlayers()) {
+            if (p.hasPermission(Permissions.MANAGE.permissionId)) {
                 utils.sendMessage(p, new TextComponent("ChatPointsTTV reloaded!"));
             }
         }
@@ -161,35 +133,74 @@ public class ChatPointsTTV extends JavaPlugin {
         pm.registerEvents(new Listener() {
             @EventHandler
             public void onPlayerJoin(PlayerJoinEvent player) {
-                if (twitch != null && !TwitchClient.accountConnected && player.getPlayer().hasPermission(permissions.MANAGE.permission_id)) {
+                if (twitch != null && !twitch.isAccountConnected() && player.getPlayer().hasPermission(Permissions.MANAGE.permissionId)) {
                     String msg = ChatColor.LIGHT_PURPLE + "Welcome! Remember to link your Twitch account to enable ChatPointsTTV and start listening to events!\n";
                     BaseComponent btn = new ComponentBuilder(ChatColor.DARK_PURPLE + "" + ChatColor.UNDERLINE + "[Click here to login]").create()[0];
 
                     btn.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder("Click to run command").create()));
                     btn.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/twitch link"));
 
-                    utils.sendMessage(player.getPlayer(), new BaseComponent[] {new ComponentBuilder(msg).create()[0], btn});
+                    utils.sendMessage(player.getPlayer(), new BaseComponent[]{new ComponentBuilder(msg).create()[0], btn});
                 }
             }
         }, this);
     }
 
+    private void setConfigValues() {
+        config.getConfigurationSection("COLORS").getKeys(false).forEach(key -> colors.put(key, ChatColor.valueOf(config.getConfigurationSection("COLORS").getString(key))));
+
+        config.getConfigurationSection("STRINGS").getKeys(true).forEach(key -> titleStrings.put(key, config.getConfigurationSection("STRINGS").getString(key)));
+
+
+        shouldMobsGlow = config.getBoolean("MOB_GLOW", false);
+        alertMode = AlertMode.valueOf(config.getString("INGAME_ALERTS").toUpperCase());
+        nameSpawnedMobs = config.getBoolean("DISPLAY_NAME_ON_MOB", true);
+        logEvents = plugin.config.getBoolean("LOG_EVENTS");
+    }
+
     @Override
     public void onDisable() {
-        if (twitch != null && twitch.isAccountConnected()) twitch.unlink(Bukkit.getConsoleSender());
+        if (twitch != null && twitch.isAccountConnected()) {
+            twitch.unlink(Bukkit.getConsoleSender());
+        }
 
         ImplicitGrantFlow.server.stop();
-    
-        // Erase variables
-        config = null;
-        configOk = true;
-        plugin = null;
-        twitch = null;
 
-        Rewards.rewards = new HashMap<>();
-        TwitchEventHandler.rewardBold = null;
+        Rewards.resetRewards();
 
         HandlerList.unregisterAll(this);
     }
 
+    public Object getRewardConfig(RewardType type) {
+        return config.get(type.toString().toUpperCase() + "_REWARDS");
+    }
+
+    public void addMetricChart(CustomChart chart) {
+        this.metrics.addCustomChart(chart);
+    }
+
+
+    public boolean isShouldMobsGlow() {
+        return shouldMobsGlow;
+    }
+
+
+    public boolean isNameSpawnedMobs() {
+        return nameSpawnedMobs;
+    }
+
+
+    public boolean isConfigOk() {
+        return configOk;
+    }
+
+
+    public AlertMode getAlertMode() {
+        return alertMode;
+    }
+
+
+    public boolean isLogEvents() {
+        return logEvents;
+    }
 }
