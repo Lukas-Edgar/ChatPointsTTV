@@ -1,4 +1,4 @@
-package me.gosdev.chatpointsttv.Utils;
+package me.gosdev.chatpointsttv.utils;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;

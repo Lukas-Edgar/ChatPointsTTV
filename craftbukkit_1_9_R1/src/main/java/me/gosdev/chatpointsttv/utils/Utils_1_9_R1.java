@@ -1,4 +1,4 @@
-package me.gosdev.chatpointsttv.Utils;
+package me.gosdev.chatpointsttv.utils;
 
 import me.gosdev.chatpointsttv.Permissions;
 import net.md_5.bungee.api.ChatColor;

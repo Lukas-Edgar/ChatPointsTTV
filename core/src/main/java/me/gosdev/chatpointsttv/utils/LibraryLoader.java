@@ -1,12 +1,15 @@
-package me.gosdev.chatpointsttv.Utils;
-
-import java.util.ArrayList;
-
-import com.alessiodp.libby.BukkitLibraryManager;
-import com.alessiodp.libby.Library;
-import com.alessiodp.libby.logging.LogLevel;
+package me.gosdev.chatpointsttv.utils;
 
 import me.gosdev.chatpointsttv.ChatPointsTTV;
+import net.byteflux.libby.BukkitLibraryManager;
+import net.byteflux.libby.Library;
+import net.byteflux.libby.logging.LogLevel;
+
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import static org.bukkit.Bukkit.getLogger;
 
 public class LibraryLoader {
 

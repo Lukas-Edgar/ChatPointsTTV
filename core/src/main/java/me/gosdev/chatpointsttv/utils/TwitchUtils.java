@@ -1,4 +1,4 @@
-package me.gosdev.chatpointsttv.Utils;
+package me.gosdev.chatpointsttv.utils;
 
 import java.util.ArrayList;
 import java.util.Arrays;

@@ -1,4 +1,4 @@
-package me.gosdev.chatpointsttv.Utils;
+package me.gosdev.chatpointsttv.utils;
 
 import java.awt.Color;
 import java.util.Map;

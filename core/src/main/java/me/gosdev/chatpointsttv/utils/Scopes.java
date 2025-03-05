@@ -1,4 +1,4 @@
-package me.gosdev.chatpointsttv.Utils;
+package me.gosdev.chatpointsttv.utils;
 
 /**
  * When requesting authorization from users, the scope parameter allows you to specify
