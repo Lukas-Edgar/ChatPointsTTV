@@ -14,6 +14,8 @@ import java.util.stream.Collectors;
 import static java.util.function.Predicate.not;
 
 public class TestCommand {
+
+    private TestCommand() {}
     private static final EventManager eventManager = ChatPointsTTV.getInstance().getTwitch().getClient().getEventManager();
 
     public static void test(CommandSender sender, String[] cmdInput) {
