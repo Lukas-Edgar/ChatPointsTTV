@@ -212,7 +212,7 @@ public class TwitchEventHandler {
     }
 
     private boolean isWrongTargetId(String id, Reward reward) {
-        return !reward.getTargetId().equals(id) && !reward.getTargetId().equals(Rewards.EVERYONE);
+        return !reward.getChannelId().equals(id) && !reward.getChannelId().equals(Rewards.EVERYONE);
     }
 
     private SubscriptionPlan getSubscriptionTier(ChannelChatNotificationEvent event) {

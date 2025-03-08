@@ -4,6 +4,8 @@ import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 import me.gosdev.chatpointsttv.utils.RewardType;
 import org.bukkit.configuration.ConfigurationSection;
 
@@ -11,9 +13,8 @@ import me.gosdev.chatpointsttv.ChatPointsTTV;
 
 import static org.bukkit.Bukkit.getLogger;
 
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class Rewards {
-
-    private Rewards() {}
 
     private static final Logger LOG = getLogger();
     public static final String EVERYONE = "*";

@@ -1,5 +1,6 @@
 package me.gosdev.chatpointsttv.utils;
 
+import lombok.Setter;
 import me.gosdev.chatpointsttv.ChatPointsTTV;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
@@ -7,9 +8,9 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.TNTPrimed;
 
+@Setter
 public class SpawnRunnable implements Runnable {
     private EntityType entity;
-
     private int iterations = 0;
     private int amount;
     private String entityName;
@@ -36,28 +37,5 @@ public class SpawnRunnable implements Runnable {
         }
     }
 
-    public void setEntityName(String entityName) {
-        this.entityName = entityName;
-    }
-
-    public void setEntity(EntityType entity) {
-        this.entity = entity;
-    }
-
-    public void setAmount(int amount) {
-        this.amount = amount;
-    }
-    public void setExplosionTime(Integer explosionTime) {
-        this.explosionTime = explosionTime;
-    }
-
-    public void setPlayer(Player player) {
-        this.player = player;
-
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
 }
     

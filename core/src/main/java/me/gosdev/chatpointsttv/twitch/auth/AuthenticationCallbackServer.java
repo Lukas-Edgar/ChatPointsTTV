@@ -9,6 +9,7 @@ import java.net.URL;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import lombok.Getter;
 import me.gosdev.chatpointsttv.utils.Scopes;
 
 import static org.bukkit.Bukkit.getLogger;
@@ -35,6 +36,7 @@ public class AuthenticationCallbackServer implements AuthenticationListener {
     private final URL successPage;
     private final int port;
     private ServerSocket serverSocket;
+    @Getter
     private String accessToken;
     Thread thread;
 
@@ -110,15 +112,6 @@ public class AuthenticationCallbackServer implements AuthenticationListener {
     @Override
     public void onAuthenticationError(String error, String description) {
         stop();
-    }
-
-    /**
-     * Get the access token if one exists.
-     *
-     * @return Access token if it exists, <code>null</code> otherwise
-     */
-    public String getAccessToken() {
-        return accessToken;
     }
 
 }

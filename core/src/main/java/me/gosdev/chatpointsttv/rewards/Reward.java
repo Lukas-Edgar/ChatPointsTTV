@@ -1,14 +1,17 @@
 package me.gosdev.chatpointsttv.rewards;
 
+import lombok.Getter;
 import me.gosdev.chatpointsttv.utils.RewardType;
 import me.gosdev.chatpointsttv.utils.TwitchUtils;
 
 import java.util.List;
 
+@Getter
 public class Reward {
-    RewardType type;
+    private final RewardType type;
     private final String event;
-    private final List<String> cmds;
+    private final List<String> commands;
+
     private final String channel;
     private final String channelId;
 
@@ -19,22 +22,6 @@ public class Reward {
         channelId = channel.equals(Rewards.EVERYONE) ? "*" : TwitchUtils.getUserId(channel);
 
         this.event = event;
-        this.cmds = cmds;
-    }
-
-    public String getEvent() {
-        return event;
-    }
-    public List<String> getCommands() {
-        return cmds;
-    }
-    public RewardType getType() {
-        return type;
-    }
-    public String getChannel() {
-        return channel;
-    }
-    public String getTargetId() {
-        return channelId;
+        this.commands = cmds;
     }
 }

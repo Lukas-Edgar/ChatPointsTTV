@@ -11,12 +11,13 @@ import com.github.twitch4j.helix.domain.StreamList;
 import com.github.twitch4j.helix.domain.UserList;
 import com.netflix.hystrix.exception.HystrixRuntimeException;
 
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 import me.gosdev.chatpointsttv.ChatPointsTTV;
 import me.gosdev.chatpointsttv.twitch.TwitchClient;
 
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class TwitchUtils {
-
-    private TwitchUtils() {}
 
     public static List<String> getModeratedChannelIDs(String auth, String userId) throws HystrixRuntimeException {
         String cursor = null;

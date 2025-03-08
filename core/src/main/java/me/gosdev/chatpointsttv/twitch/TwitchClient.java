@@ -20,6 +20,7 @@ import com.github.twitch4j.eventsub.socket.events.EventSocketSubscriptionSuccess
 import com.github.twitch4j.eventsub.subscriptions.SubscriptionTypes;
 import com.github.twitch4j.helix.domain.User;
 import com.github.twitch4j.pubsub.events.RewardRedeemedEvent;
+import lombok.Getter;
 import me.gosdev.chatpointsttv.ChatPointsTTV;
 import me.gosdev.chatpointsttv.Permissions;
 import me.gosdev.chatpointsttv.rewards.Rewards;
@@ -52,14 +53,18 @@ public class TwitchClient {
 
     private Thread linkThread;
 
+    @Getter
     private boolean customCredentialsFound;
+    @Getter
     private boolean ignoreOfflineStreamers;
+    @Getter
     private boolean accountConnected = false;
     private OAuth2Credential oAuth;
 
     private User user;
     private String userId;
     private List<String> chatBlacklist;
+    @Getter
     private ITwitchClient client;
     private HashMap<String, Channel> channels;
     private TwitchEventHandler eventHandler;
@@ -97,14 +102,6 @@ public class TwitchClient {
         return oAuth;
     }
 
-    public boolean isCustomCredentialsFound() {
-        return customCredentialsFound;
-    }
-
-    public boolean isIgnoreOfflineStreamers() {
-        return ignoreOfflineStreamers;
-    }
-
     private void setup(Optional<String> clientId, Optional<String> accessToken, boolean ignoreOfflineStreamers, boolean rewardBold) {
         this.clientId = clientId;
         this.accessToken = accessToken;
@@ -118,14 +115,6 @@ public class TwitchClient {
 
     public String getClientId() {
         return clientId.orElseThrow(() -> new AuthenticationException("Client ID not found"));
-    }
-
-    public boolean isAccountConnected() {
-        return accountConnected;
-    }
-
-    public ITwitchClient getClient() {
-        return client;
     }
 
     public String getConnectedUsername() {
@@ -310,8 +299,8 @@ public class TwitchClient {
 
     private void updateChannelStatus(String channelName, boolean live) {
         for (Channel channel : channels.values()) {
-            if (channel.getChannelUsername().equalsIgnoreCase(channelName))
-                channel.updateStatus(live);
+            if (channel.getChannelName().equalsIgnoreCase(channelName))
+                channel.setLive(live);
         }
     }
 

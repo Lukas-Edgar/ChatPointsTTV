@@ -14,12 +14,13 @@ import com.github.twitch4j.pubsub.domain.ChannelPointsReward;
 import com.github.twitch4j.pubsub.domain.ChannelPointsUser;
 import com.github.twitch4j.pubsub.events.RewardRedeemedEvent;
 
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 import me.gosdev.chatpointsttv.ChatPointsTTV;
 import me.gosdev.chatpointsttv.utils.TwitchUtils;
 
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class EventTest {
-
-    private EventTest() {}
 
     public static final String CHATTER_USER_ID = "{\"chatter_user_id\":\"";
     public static final String CHATTER_USER_LOGIN = "\",\"chatter_user_login\":\"";
