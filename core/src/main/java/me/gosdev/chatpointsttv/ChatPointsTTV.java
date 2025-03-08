@@ -5,8 +5,6 @@ import java.util.Map;
 import java.util.logging.Logger;
 
 import javax.naming.ConfigurationException;
-
-import lombok.Getter;
 import me.gosdev.chatpointsttv.utils.*;
 import org.bstats.bukkit.Metrics;
 import org.bstats.charts.CustomChart;
@@ -32,20 +30,14 @@ import net.md_5.bungee.api.chat.TextComponent;
 
 public class ChatPointsTTV extends JavaPlugin {
     private static ChatPointsTTV plugin;
-    @Getter
     private TwitchClient twitch;
 
     private static final Map<String, ChatColor> colors = new HashMap<>();
     private static final Map<String, String> titleStrings = new HashMap<>();
-    @Getter
     private boolean shouldMobsGlow;
-    @Getter
     private boolean nameSpawnedMobs;
-    @Getter
     private boolean configOk = true;
-    @Getter
     private AlertMode alertMode;
-    @Getter
     private boolean logEvents;
 
 
@@ -70,6 +62,10 @@ public class ChatPointsTTV extends JavaPlugin {
             plugin = new ChatPointsTTV();
         }
         return plugin;
+    }
+
+    public TwitchClient getTwitch() {
+        return twitch;
     }
 
 
@@ -184,4 +180,27 @@ public class ChatPointsTTV extends JavaPlugin {
     }
 
 
+    public boolean isShouldMobsGlow() {
+        return shouldMobsGlow;
+    }
+
+
+    public boolean isNameSpawnedMobs() {
+        return nameSpawnedMobs;
+    }
+
+
+    public boolean isConfigOk() {
+        return configOk;
+    }
+
+
+    public AlertMode getAlertMode() {
+        return alertMode;
+    }
+
+
+    public boolean isLogEvents() {
+        return logEvents;
+    }
 }

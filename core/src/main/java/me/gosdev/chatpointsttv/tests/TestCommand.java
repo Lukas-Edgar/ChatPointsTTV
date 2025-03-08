@@ -2,8 +2,6 @@ package me.gosdev.chatpointsttv.tests;
 
 import com.github.philippheuer.events4j.core.EventManager;
 import com.github.twitch4j.common.enums.SubscriptionPlan;
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
 import me.gosdev.chatpointsttv.ChatPointsTTV;
 import me.gosdev.chatpointsttv.utils.MalformedArgumentsException;
 import net.md_5.bungee.api.ChatColor;
@@ -15,9 +13,9 @@ import java.util.stream.Collectors;
 
 import static java.util.function.Predicate.not;
 
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class TestCommand {
 
+    private TestCommand() {}
     private static final EventManager eventManager = ChatPointsTTV.getInstance().getTwitch().getClient().getEventManager();
 
     public static void test(CommandSender sender, String[] cmdInput) {

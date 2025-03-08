@@ -8,9 +8,6 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
 import org.bukkit.entity.Player;
 import org.json.JSONArray;
 
@@ -22,9 +19,9 @@ import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
 
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class VersionCheck {
 
+    private VersionCheck() {}
     private static final String URL = "https://api.modrinth.com/v2/project/nN0gRvoO/version";
     private static final String DOWNLOAD_URL = "https://modrinth.com/plugin/chatpointsttv";
 

@@ -1,9 +1,5 @@
 package me.gosdev.chatpointsttv.utils;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.ToString;
-
 /**
  * When requesting authorization from users, the scope parameter allows you to specify
  * which permissions your app requires. These scopes are ties to the access token you
@@ -11,9 +7,6 @@ import lombok.ToString;
  * access to basic information about the authenticated user. You may specify any or all
  * of the following scopes.
  */
-@Getter
-@ToString
-@AllArgsConstructor
 public enum Scopes {
 
     /**
@@ -436,7 +429,12 @@ public enum Scopes {
     WHISPERS_EDIT("whispers:edit");
 
 
+
     private final String key;
+
+    Scopes(String key) {
+        this.key = key;
+    }
 
     /**
      * Combine <code>Scopes</code> into a '+' separated <code>String</code>.
@@ -471,4 +469,17 @@ public enum Scopes {
         return null;
     }
 
+    /**
+     * Get the identifier that twitch will recognize.
+     *
+     * @return A <code>String</code> identifier
+     */
+    public String getKey() {
+        return key;
+    }
+
+    @Override
+    public String toString() {
+        return key;
+    }
 }

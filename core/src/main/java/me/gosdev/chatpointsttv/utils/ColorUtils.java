@@ -5,14 +5,11 @@ import java.util.Map;
 
 import com.google.common.collect.ImmutableMap;
 
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
 import net.md_5.bungee.api.ChatColor;
 
 /**
  * Mapping of Spigot ChatColor to appropriate Java Color
  */
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class ColorUtils {
 
     private static final Map<ChatColor, Color> COLOR_MAPPINGS = ImmutableMap.<ChatColor, Color>builder()
@@ -34,6 +31,7 @@ public class ColorUtils {
         .put(ChatColor.WHITE, new Color(255, 255, 255))
         .build();
 
+    private ColorUtils() {}
 
     public static int hexToRgb(String hex) {
         if (hex.startsWith("#")) {

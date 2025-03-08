@@ -1,7 +1,5 @@
 package me.gosdev.chatpointsttv;
 
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
 import me.gosdev.chatpointsttv.utils.AlertMode;
 import me.gosdev.chatpointsttv.utils.SpawnRunnable;
 import me.gosdev.chatpointsttv.utils.Utils;
@@ -23,9 +21,9 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class Events {
 
+    private Events() {}
     static ChatPointsTTV plugin = ChatPointsTTV.getInstance();
     static Logger log = plugin.log;
 

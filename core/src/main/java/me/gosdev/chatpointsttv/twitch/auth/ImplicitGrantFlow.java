@@ -3,8 +3,6 @@ package me.gosdev.chatpointsttv.twitch.auth;
 import java.io.IOException;
 import java.util.concurrent.CompletableFuture;
 
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 
@@ -18,8 +16,9 @@ import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
 
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class ImplicitGrantFlow {
+
+    private ImplicitGrantFlow() {}
 
     public static final AuthenticationCallbackServer server = new AuthenticationCallbackServer(3000);
 

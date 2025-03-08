@@ -1,6 +1,5 @@
 package me.gosdev.chatpointsttv.twitch.auth;
 
-import lombok.Setter;
 import me.gosdev.chatpointsttv.utils.Scopes;
 
 import java.io.*;
@@ -26,7 +25,6 @@ public class AuthenticationCallbackRequest implements Runnable {
     private final URL failurePage;
     private final URL successPage;
 
-    @Setter
     private AuthenticationListener authenticationListener;
 
     /**
@@ -86,6 +84,10 @@ public class AuthenticationCallbackRequest implements Runnable {
         }
 
         return params;
+    }
+
+    public void setAuthenticationListener(AuthenticationListener receiver) {
+        this.authenticationListener = receiver;
     }
 
     @Override

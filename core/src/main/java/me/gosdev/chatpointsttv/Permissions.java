@@ -1,8 +1,5 @@
 package me.gosdev.chatpointsttv;
 
-import lombok.AllArgsConstructor;
-
-@AllArgsConstructor
 public enum Permissions {
     BROADCAST("chatpointsttv.broadcast"),
     MANAGE("chatpointsttv.manage"),
@@ -10,4 +7,7 @@ public enum Permissions {
 
     public final String permissionId;
 
+    Permissions(String label) {
+        this.permissionId = label;
+    }
 }

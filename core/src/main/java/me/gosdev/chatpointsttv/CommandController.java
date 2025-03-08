@@ -308,7 +308,7 @@ public class CommandController implements TabExecutor {
 
         for (Channel channel : twitch.getListenedChannels().values()) {
             ChatColor color = channel.isLive() ? ChatColor.DARK_RED : ChatColor.GRAY;
-            strChannels.append(color).append(channel.getChannelName()).append(ChatColor.RESET).append(", ");
+            strChannels.append(color).append(channel.getChannelUsername()).append(ChatColor.RESET).append(", ");
         }
 
         boolean hasListenedChannel = !twitch.getListenedChannels().isEmpty();
